@@ -26,6 +26,9 @@ public interface UserDao {
     @Select({"select ",SELECT_NAME," from ",TABLE_NAME," where id = #{id}"})
     User selectById(int id);
 
+    @Select({"select ",SELECT_NAME," from ",TABLE_NAME," where name = #{name}"})
+    User selectByName(String name);
+
     @Delete({"delete from ",TABLE_NAME," where id = #{id}"})
     int deleteUser(User user);
 }
