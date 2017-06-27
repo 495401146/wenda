@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -37,7 +38,9 @@ public class LoginController {
                            @RequestParam("name") String name,
                            @RequestParam("password") String password,
                            @RequestParam("remember_me") boolean rememberme,
+                           @RequestParam(value = "code",required = false) String code,
                            @RequestParam(value = "next",required = false) String next,
+                           HttpServletRequest request,
                            HttpServletResponse response) {
         try {
             Map map = userService.register(name, password);
@@ -45,6 +48,11 @@ public class LoginController {
                 model.addAttribute("msg", map.get("msg"));
                 model.addAttribute("next",next);
                 System.out.print(map.get("msg"));
+                return "login";
+            }
+            if(!checkCode(request,code))
+            {
+                model.addAttribute("msg","验证码错误");
                 return "login";
             }
             Cookie cookie = new Cookie("ticket",map.get("ticket").toString());
@@ -71,8 +79,10 @@ public class LoginController {
                            @RequestParam("name") String name,
                            @RequestParam("password") String password,
                            @RequestParam("remember_me") boolean rememberme,
+                        @RequestParam(value = "code",required = false) String code,
                            @RequestParam(value = "next",required = false) String next,
-                           HttpServletResponse response)
+                           HttpServletResponse response,
+                            HttpServletRequest request)
     {
         Map map = userService.login(name,password);
         try {
@@ -80,6 +90,11 @@ public class LoginController {
             {
                 model.addAttribute("msg",map.get("msg"));
                 model.addAttribute("next",next);
+                return "login";
+            }
+            if(!checkCode(request,code))
+            {
+                model.addAttribute("msg","验证码错误");
                 return "login";
             }
             Cookie cookie = new Cookie("ticket",map.get("ticket").toString());
@@ -108,5 +123,17 @@ public class LoginController {
        userService.logout(ticket);
        return "redirect:/";
     }
-
+    public boolean checkCode(HttpServletRequest request,String code)
+    {
+        HttpSession session = request.getSession();
+        if(session!=null&&session.getAttribute("RANDOMVALIDATECODEKEY")!=null)
+        {
+            String value = String.valueOf(session.getAttribute("RANDOMVALIDATECODEKEY").toString());
+            if(code.equalsIgnoreCase(value))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -77,6 +77,7 @@ public class UserService {
         {
             System.out.println("用户id不存在");
         }
+        loginTicketDao.updateTicketByUserId(0,user.getId());
         map.put("ticket",addLoginTicket(user.getId()));
         return map;
     }
@@ -105,6 +106,7 @@ public class UserService {
             map.put("msg","密码错误");
             return map;
         }
+        loginTicketDao.updateTicketByUserId(0,user.getId());
         map.put("ticket",addLoginTicket(user.getId()));
         return map;
     }

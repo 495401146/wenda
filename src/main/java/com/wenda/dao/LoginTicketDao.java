@@ -1,6 +1,7 @@
 package com.wenda.dao;
 
 import com.wenda.model.LoginTicket;
+import com.wenda.model.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -27,4 +28,7 @@ public interface LoginTicketDao {
 
     @Update({"update ", TABLE_NAME, " set status=#{status} where ticket=#{ticket}"})
     void updateTicket(LoginTicket ticket);
+
+    @Update({"update ", TABLE_NAME, " set status=#{status} where user_id=#{userId}"})
+    void updateTicketByUserId(int status,int userId);
 }
